@@ -77,14 +77,24 @@ export default function MemberForm(props) {
       <div>
         <label>Name:</label>
         <div>
-          <input value={member.name} name="name" onChange={changeHandler} />
+          <input
+            data-cy="isiminput"
+            value={member.name}
+            name="name"
+            onChange={changeHandler}
+          />
           {errors.name && <p>{errors.name}</p>}
         </div>
       </div>
 
       <label>
         Email:
-        <input value={member.email} name="email" onChange={changeHandler} />
+        <input
+          data-cy="emailinput"
+          value={member.email}
+          name="email"
+          onChange={changeHandler}
+        />
       </label>
       {errors.email && <p>{errors.email}</p>}
       <label>
@@ -94,6 +104,7 @@ export default function MemberForm(props) {
           value={member.password}
           name="password"
           onChange={changeHandler}
+          data-cy="sifreinput"
         />
       </label>
       {errors.password && <p>{errors.password}</p>}
@@ -105,6 +116,7 @@ export default function MemberForm(props) {
               name="terms"
               checked={member.terms}
               onChange={changeHandler}
+              data-cy="termsinput"
             />
           </div>
           <div>
@@ -113,7 +125,7 @@ export default function MemberForm(props) {
           </div>
         </div>
       </div>
-      <button disabled={!isFormValid} type="submit">
+      <button data-cy="butoninput" disabled={!isFormValid} type="submit">
         Gönder
       </button>
     </form>
