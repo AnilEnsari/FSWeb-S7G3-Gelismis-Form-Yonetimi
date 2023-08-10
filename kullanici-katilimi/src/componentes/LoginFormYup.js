@@ -30,7 +30,6 @@ export default function MemberForm(props) {
 
   const isAllFormValid = (formData) => {
     schema.isValid(formData).then((valid) => {
-      console.log("isAllFormValid", valid);
       setIsFormValid(valid); // => true
     });
   };
@@ -64,17 +63,13 @@ export default function MemberForm(props) {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    console.log("Formda hiç bir hata yok?", isAllFormValid(member));
 
     axios
       .post("https://reqres.in/api/users", member)
       .then((res) => {
-        console.log("submitHandler", res);
         addMember(res.data);
       })
-      .catch((err) => {
-        console.log("submitHandler", err);
-      });
+      .catch((err) => {});
   };
 
   return (
