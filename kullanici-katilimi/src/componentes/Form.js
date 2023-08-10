@@ -1,46 +1,72 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import {
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  FormFeedback,
+} from "reactstrap";
 import * as Yup from "yup";
-function Form() {
-  const [isFormvalid, setFormvalid] = useState(false);
-  const loginDataStarter = {
-    email: "",
-    password: "",
-    terms: false,
-  };
 
-  const [loginData, setLoginData] = useState(loginDataStarter);
+const loginDataInitial = {
+  isim: "",
+  email: "",
+  password: "",
+  rememberMe: false,
+  terms: false,
+  role: null,
+};
+
+// const roller = [
+//   { label: "Yönetici", value: "admin" },
+//   { label: "Yazar", value: "Writer" },
+//   { label: "Okur", value: "Reader" },
+// ];
+
+const LoginFormYup = () => {
+  const [loginData, setLoginData] = useState(loginDataInitial);
   const [formErrors, setFormErrors] = useState({
+    isim: "",
     email: "",
     password: "",
     terms: "",
+    // rememberMe: "",
+    // option: "",
+    // role: "",
   });
   const [isFormValid, setFormValid] = useState(false);
 
   const formSchema = Yup.object().shape({
+    isim: Yup.string(),
     email: Yup.string()
-      .email("Geçerli bir email adresi girmezsen küserim.")
-      .required("Aradığnız kişiye şu anda ulaşılamıyor"),
-    password: Yup.string()
-      .required("Şifre önemlidir!")
-      .min(6, "Hacklenmek mi istiyorsun ? 6 karakterden az şifre mi olur ?"),
+      .email("Bu email olmamış!")
+      .required("E-posta adresini girmezsen sana nasıl ulaşıcam? "),
+    password: Yup.string().required("Şifre şart").min(6, "Six or S.."),
     terms: Yup.boolean().oneOf(
       [true],
-      "Bu koşulları onaylamazsan görüşebilmemiz mümkün değil!"
+      "Şaka yapıyor olmalısın; hala kabul etmedin"
     ),
-    // required isn't required for checkboxes.
   });
-  const handleSubmit = (event) => {
-    event.preventDefault();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Submit Edildi! ", loginData);
+    // axios.post("https://wwww.haziran-react.com/api/login", loginData);
   };
-  const handleChange = (event) => {
-    const { name, value, type, checked } = event.target;
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const inputValue = type === "checkbox" ? checked : value;
+
     setLoginData({
       ...loginData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: inputValue,
     });
-    validateFormField(event);
+
+    validateFormField(e);
   };
+
   const validateFormField = (e) => {
     const { name, value, type, checked } = e.target;
     const inputValue = type === "checkbox" ? checked : value;
@@ -56,69 +82,79 @@ function Form() {
   };
 
   useEffect(() => {
-    console.log("Login Data > ", loginData);
     formSchema.isValid(loginData).then((valid) => setFormValid(valid));
   }, [loginData]);
 
-  useEffect(() => {
-    console.error("[Form Validation Error State Updated] ", formErrors);
-  }, [formErrors]);
-
   return (
-    <form onSubmit={handleSubmit}>
-      <ul>
-        <li>
-          <label htmlFor="isim">İsim</label>
-          <input
-            id="isim"
-            onChange={handleChange}
-            type="text"
-            name="isim"
-            value={loginData.isim}
-            invalid={!!formErrors.isim}
-          ></input>
-        </li>
-        <li>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            onChange={handleChange}
-            type="email"
-            name="email"
-            value={loginData.email}
-            invalid={!!formErrors.email}
-          ></input>
-        </li>
-        <li>
-          <label htmlFor="sifre">Şifre</label>
-          <input
-            id="sifre"
-            onChange={handleChange}
-            type="text"
-            name="sifre"
-            value={loginData.sifre}
-            invalid={!!formErrors.password}
-          ></input>
-        </li>
-        <li>
-          <label htmlFor="terms">Kullanım Şartlarını onaylıyorum</label>
-          <input
-            id="terms"
-            onChange={handleChange}
-            type="checkbox"
-            name="terms"
-            checked={loginData.terms}
-            invalid={!!formErrors.terms}
-          ></input>
-        </li>
-        <li>
-          <button type="submit" disabled={!isFormvalid}>
-            Gönder
-          </button>
-        </li>
-      </ul>
-    </form>
-  );
-}
+    <Form onSubmit={handleSubmit} className="login-form">
+      <h2>Login Form</h2>
+      <hr />
+      <FormGroup>
+        <Label htmlFor="isim">İsim</Label>
+        <Input
+          id="isim"
+          type="text"
+          name="isim"
+          value={loginData.isim}
+          onChange={handleInputChange}
+          invalid={!!formErrors.isim}
+        />
+        <FormFeedback>{formErrors.isim}</FormFeedback>
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="user-mail">Email</Label>
+        <Input
+          id="user-mail"
+          type="email"
+          name="email"
+          value={loginData.email}
+          onChange={handleInputChange}
+          placeholder="Lütfen eposta bilgisini giriniz..."
+          invalid={!!formErrors.email}
+        />
+        <FormFeedback>{formErrors.email}</FormFeedback>
+      </FormGroup>
 
-export default Form;
+      <FormGroup>
+        <Label htmlFor="user-pass">Password</Label>
+        <Input
+          id="user-pass"
+          type="password"
+          name="password"
+          value={loginData.password}
+          onChange={handleInputChange}
+          invalid={!!formErrors.password}
+        />
+        <FormFeedback>{formErrors.password}</FormFeedback>
+      </FormGroup>
+
+      <FormGroup check>
+        <Label htmlFor="terms">Terms</Label>
+        <Input
+          id="terms"
+          type="checkbox"
+          name="terms"
+          checked={loginData.terms}
+          onChange={handleInputChange}
+          invalid={!!formErrors.terms}
+        />
+        <FormFeedback>{formErrors.terms}</FormFeedback>
+      </FormGroup>
+
+      <br />
+      <Button
+        type="button"
+        onClick={() => {
+          setLoginData(loginDataInitial);
+        }}
+      >
+        Reset Form
+      </Button>
+      <Button type="submit" disabled={!isFormValid} data-cy="login-button">
+        Login
+      </Button>
+    </Form>
+  );
+};
+
+export default LoginFormYup;
