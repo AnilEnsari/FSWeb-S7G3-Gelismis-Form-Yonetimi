@@ -30,7 +30,7 @@ export default function MemberForm(props) {
 
   const isAllFormValid = (formData) => {
     schema.isValid(formData).then((valid) => {
-      setIsFormValid(valid); // => true
+      setIsFormValid(valid);
     });
   };
 
@@ -60,6 +60,15 @@ export default function MemberForm(props) {
     isAllFormValid(newMemberData);
     fieldValidateHandler(name, fieldData);
   };
+  const resetHandler = (event) => {
+    console.log("reset edildi");
+    setMember({
+      name: "",
+      email: "",
+      password: "",
+      terms: false,
+    });
+  };
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -70,10 +79,11 @@ export default function MemberForm(props) {
         addMember(res.data);
       })
       .catch((err) => {});
+    resetHandler();
   };
 
   return (
-    <form onSubmit={submitHandler}>
+    <form onReset={resetHandler} onSubmit={submitHandler}>
       <div>
         <label>Name:</label>
         <div>
@@ -125,6 +135,7 @@ export default function MemberForm(props) {
           </div>
         </div>
       </div>
+      <button type="reset">Vazgeç</button>
       <button data-cy="butoninput" disabled={!isFormValid} type="submit">
         Gönder
       </button>
